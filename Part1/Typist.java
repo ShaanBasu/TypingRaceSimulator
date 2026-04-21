@@ -1,28 +1,19 @@
 /**
- * Write a description of class Typist here.
- *
- * Starter code generously abandoned by Ty Posaurus, your predecessor,
- * who typed with two fingers and considered that "good enough".
- * He left a sticky note: "the slide-back thing is optional probably".
- * It is not optional. Good luck.
- *
+ The typist class represents individual competitors in the race. This script pertains to the respective fields every typist should have which needs to be
+ changed and assessed for the functioning of the race. Moreover, the methods needed to change and initialise these respective fields are also provided in the script.
+ This script performs operations on the typists making sure that the typist progresses in the race and has a set of attributes which determines its progress in the race.
  * @author (Shaan Basu)
  * @version (21/04/2026)
  */
+
 public class Typist
 {
     // Fields of class Typist
-    // Hint: you will need six fields. Think carefully about their types.
-    // One of them tracks how far along the passage the typist has reached.
-    // Another tracks whether the typist is currently burnt out.
-    // A third tracks HOW MANY turns of burnout remain (not just whether they are burnt out).
-    // The remaining three should be fairly obvious.
-
-    private String typistName;
-    private char typistSymbol;
     private int currentProgress;
     private boolean burntOut;
     private int turns;
+    private String typistName;
+    private char typistSymbol;
     private double typistAccuracy;
 
 
