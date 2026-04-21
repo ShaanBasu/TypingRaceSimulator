@@ -9,11 +9,12 @@
 public class Typist
 {
     // Fields of class Typist
-    private int currentProgress;
-    private boolean burntOut;
-    private int turns;
     private String typistName;
     private char typistSymbol;
+    private int currentProgress;
+    private boolean slideBacked;
+    private boolean burntOut;
+    private int turns;
     private double typistAccuracy;
 
 
@@ -34,8 +35,8 @@ public class Typist
         this.currentProgress = 0;
         this.burntOut = false;
         this.turns = 0;
+        this.slideBacked = false;
     }
-
 
     // Methods of class Typist
 
@@ -67,6 +68,16 @@ public class Typist
         }
         return;
         
+    }
+
+    /*
+    Changes the status of the slidebacked to false when the user has mistyped
+    */
+    public void recoverFromMistype(){
+        if(slideBacked){
+            slideBacked = false;
+        }
+        return;
     }
 
     /**
@@ -131,6 +142,7 @@ public class Typist
         currentProgress = 0;
         burntOut = false;
         turns = 0;
+        slideBacked = false;
     }
 
     /**
@@ -144,6 +156,16 @@ public class Typist
             return true;
         }
         return false; 
+    }
+
+    /*
+    Returns true if the typist has currently slidebacked/mistyped
+    */
+    public boolean hasMistyped(){
+        if(slideBacked){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -173,6 +195,7 @@ public class Typist
         else{
             currentProgress = 0;
         }
+        slideBacked = true;
         return;
     }
 
