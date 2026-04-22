@@ -76,7 +76,6 @@ public class TypingRace
         boolean finished1 = false;
         boolean finished2 = false;
         boolean finished3 = false;
-        String winnersPreviousAccuracy;
 
         seat1Typist.resetToStart();
         seat2Typist.resetToStart();
@@ -114,28 +113,13 @@ public class TypingRace
 
         // Printing the winners name:
         if(finished1){
-            winnersPreviousAccuracy = String.format("%.2f", seat1Typist.getAccuracy());
-            System.out.println("");
-            System.out.println("And the winner is... " + seat1Typist.getName());
-            seat1Typist.setAccuracy(seat1Typist.getAccuracy() + (0.05 + (Math.random() * 0.05)));
-            String formattedAccuracy = String.format("%.2f", seat1Typist.getAccuracy());
-            System.out.println("Final accuracy:  " + formattedAccuracy + " (improved from " + winnersPreviousAccuracy + ")");
+            winnerPrint(seat1Typist);
         }
         else if(finished2){
-            winnersPreviousAccuracy = String.format("%.2f", seat2Typist.getAccuracy());
-            System.out.println("");
-            System.out.println("And the winner is... " + seat2Typist.getName());
-            seat2Typist.setAccuracy(seat2Typist.getAccuracy() + (0.05 + (Math.random() * 0.05)));
-            String formattedAccuracy = String.format("%.2f", seat2Typist.getAccuracy());
-            System.out.println("Final accuracy:  " + formattedAccuracy + " (improved from " + winnersPreviousAccuracy + ")");
+            winnerPrint(seat2Typist);
         }
         else if(finished3){
-            winnersPreviousAccuracy = String.format("%.2f", seat3Typist.getAccuracy());
-            System.out.println("");
-            System.out.println("And the winner is... " + seat3Typist.getName());
-            seat3Typist.setAccuracy(seat3Typist.getAccuracy() + (0.05 + (Math.random() * 0.05)));
-            String formattedAccuracy = String.format("%.2f", seat3Typist.getAccuracy());
-            System.out.println("Final accuracy:  " + formattedAccuracy + " (improved from " + winnersPreviousAccuracy + ")");
+            winnerPrint(seat3Typist);
         }
     }
 
@@ -309,4 +293,21 @@ public class TypingRace
             i = i + 1;
         }
     }
+
+    /**
+     * Print the winners name and improved Accuracy
+     * @param theTypist
+     */
+    private void winnerPrint(Typist theTypist){
+            String winnersPreviousAccuracy = String.format("%.2f", theTypist.getAccuracy());
+            System.out.println("");
+            System.out.println("And the winner is... " + theTypist.getName());
+            theTypist.setAccuracy(theTypist.getAccuracy() + (0.05 + (Math.random() * 0.05)));
+            String formattedAccuracy = String.format("%.2f", theTypist.getAccuracy());
+            System.out.println("Final accuracy:  " + formattedAccuracy + " (improved from " + winnersPreviousAccuracy + ")");
+    }
 }
+
+
+
+
