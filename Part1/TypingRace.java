@@ -23,6 +23,7 @@ public class TypingRace
     private static final double MISTYPE_BASE_CHANCE = 0.3;
     private static final int    SLIDE_BACK_AMOUNT   = 2;
     private static final int    BURNOUT_DURATION     = 3;
+    private static final double BURNOUT_ACCURACY_DECREASE_AMOUNT = 0.05;
 
     /**
      * Constructor for objects of class TypingRace.
@@ -176,7 +177,7 @@ public class TypingRace
         else if (Math.random() < 0.05 * theTypist.getAccuracy() * theTypist.getAccuracy())
         {
             theTypist.burnOut(BURNOUT_DURATION);
-            theTypist.setAccuracy(theTypist.getAccuracy() - 0.05);
+            theTypist.setAccuracy(theTypist.getAccuracy() - BURNOUT_ACCURACY_DECREASE_AMOUNT);
         }
         else
         {
