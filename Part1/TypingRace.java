@@ -91,16 +91,16 @@ public class TypingRace
             // Print the current state of the race
             printRace();
 
-            // Check if any typist has finished the passage
+            // Check if any typist has finished the passage ties can happen
             if (raceFinishedBy(seat1Typist))
             {
                 finished1 = true;
             }
-            else if (raceFinishedBy(seat2Typist))
+            if (raceFinishedBy(seat2Typist))
             {
                 finished2 = true;
             }
-            else if (raceFinishedBy(seat3Typist))
+            if (raceFinishedBy(seat3Typist))
             {
                 finished3 = true;
             }
@@ -112,7 +112,20 @@ public class TypingRace
         }
 
         // Printing the winners name:
-        if(finished1){
+        // Check for ties
+        if(finished1 && finished2 && finished3){
+            printTie(seat1Typist,seat2Typist, false);
+        }
+        else if(finished1 && finished2){
+            printTie(seat1Typist, seat2Typist, true);
+        }
+        else if(finished1 && finished3){
+            printTie(seat1Typist, seat3Typist, true);
+        }
+        else if(finished2 && finished3){
+            printTie(seat2Typist, seat3Typist, true);
+        }
+        else if(finished1){
             winnerPrint(seat1Typist);
         }
         else if(finished2){
@@ -305,6 +318,30 @@ public class TypingRace
             theTypist.setAccuracy(theTypist.getAccuracy() + (0.05 + (Math.random() * 0.05)));
             String formattedAccuracy = String.format("%.2f", theTypist.getAccuracy());
             System.out.println("Final accuracy:  " + formattedAccuracy + " (improved from " + winnersPreviousAccuracy + ")");
+    }
+    /**
+     * Prints the information for a tie
+     * @param theTypist1
+     * @param theTypist2
+     */
+    private void printTie(Typist theTypist1, Typist theTypist2, boolean twoWayTie){
+        if(twoWayTie){
+            String winnersPreviousAccuracy1 = String.format("%.2f", theTypist1.getAccuracy());
+            String winnersPreviousAccuracy2 = String.format("%.2f", theTypist2.getAccuracy());
+            System.out.println("");
+            System.out.println("The race ended in a TIE!!!!\nThe Winners are: " + theTypist1.getName() + " and " + theTypist2.getName());
+            theTypist1.setAccuracy(theTypist1.getAccuracy() + (0.05 + (Math.random() * 0.05)));
+            theTypist2.setAccuracy(theTypist2.getAccuracy() + (0.05 + (Math.random() * 0.05)));
+            String formattedAccuracy1 = String.format("%.2f", theTypist1.getAccuracy());
+            String formattedAccuracy2 = String.format("%.2f", theTypist2.getAccuracy());
+            System.out.println("Final accuracy of the Winners: " + theTypist1.getName() + " : " + formattedAccuracy1 + " (improved from " + winnersPreviousAccuracy1 + "), " 
+            + theTypist2.getName() + " : " + formattedAccuracy2 + " (improved from " + winnersPreviousAccuracy2 + ")");
+        }
+        else{
+            System.out.println("");
+            System.out.println("Everyone TIED!!!\nNO ONE WINS! Try Again :)");
+        }
+        
     }
 }
 
