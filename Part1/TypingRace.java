@@ -20,7 +20,6 @@ public class TypingRace
     private Typist seat3Typist;
 
     // Accuracy thresholds for mistype and burnout events
-    // (Ty tuned these values "by feel". They may need adjustment.)
     private static final double MISTYPE_BASE_CHANCE = 0.3;
     private static final int    SLIDE_BACK_AMOUNT   = 2;
     private static final int    BURNOUT_DURATION     = 3;
@@ -70,16 +69,13 @@ public class TypingRace
      * Starts the typing race.
      * All typists are reset to the beginning, then the simulation runs
      * turn by turn until one typist completes the full passage.
-     *
-     * Note from Ty: "I didn't bother printing the winner at the end,
-     * you can probably figure that out yourself."
      */
     public void startRace()
     {
         boolean finished1 = false;
         boolean finished2 = false;
         boolean finished3 = false;
-        double winnersPreviousAccuracy = 0;
+        String winnersPreviousAccuracy;
 
         seat1Typist.resetToStart();
         seat2Typist.resetToStart();
@@ -117,7 +113,7 @@ public class TypingRace
 
         // Printing the winners name:
         if(finished1){
-            winnersPreviousAccuracy = seat1Typist.getAccuracy();
+            winnersPreviousAccuracy = String.format("%.2f", seat1Typist.getAccuracy());
             System.out.println("");
             System.out.println("And the winner is... " + seat1Typist.getName());
             seat1Typist.setAccuracy(seat1Typist.getAccuracy() + (0.05 + (Math.random() * 0.05)));
@@ -125,7 +121,7 @@ public class TypingRace
             System.out.println("Final accuracy:  " + formattedAccuracy + " (improved from " + winnersPreviousAccuracy + ")");
         }
         else if(finished2){
-            winnersPreviousAccuracy = seat2Typist.getAccuracy();
+            winnersPreviousAccuracy = String.format("%.2f", seat2Typist.getAccuracy());
             System.out.println("");
             System.out.println("And the winner is... " + seat2Typist.getName());
             seat2Typist.setAccuracy(seat2Typist.getAccuracy() + (0.05 + (Math.random() * 0.05)));
@@ -133,7 +129,7 @@ public class TypingRace
             System.out.println("Final accuracy:  " + formattedAccuracy + " (improved from " + winnersPreviousAccuracy + ")");
         }
         else if(finished3){
-            winnersPreviousAccuracy = seat3Typist.getAccuracy();
+            winnersPreviousAccuracy = String.format("%.2f", seat3Typist.getAccuracy());
             System.out.println("");
             System.out.println("And the winner is... " + seat3Typist.getName());
             seat3Typist.setAccuracy(seat3Typist.getAccuracy() + (0.05 + (Math.random() * 0.05)));
@@ -168,10 +164,11 @@ public class TypingRace
             return;
         }
         
-        // Mistype check — the probability should reflect the typist's accuracy
+        // Mistype check — the probability reflects the typists accruacy where 1 - accuracy highlights
+        // that low accuracy typists hae higher chance ot mistype and vice versa.
         if (Math.random() < (1- theTypist.getAccuracy()) * MISTYPE_BASE_CHANCE)
         {
-            int slideAmount = SLIDE_BACK_AMOUNT + (int)(1*(1-theTypist.getAccuracy()));
+            int slideAmount = SLIDE_BACK_AMOUNT + (int)(2*(theTypist.getAccuracy()));
             theTypist.slideBack(slideAmount);
         }
         // Burnout check — pushing too hard increases burnout risk
