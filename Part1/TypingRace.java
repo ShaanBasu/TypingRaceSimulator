@@ -1,3 +1,5 @@
+package Part1;
+
 import java.util.concurrent.TimeUnit;
 import java.lang.Math;
 
@@ -341,10 +343,5 @@ public class TypingRace
             System.out.println("");
             System.out.println("Everyone TIED!!!\nNO ONE WINS! Try Again :)");
         }
-        
     }
 }
-
-
-
-

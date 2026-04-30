@@ -1,3 +1,5 @@
+package Part1;
+
 public class TypistTest {
     public static void main(String[] args) {
         System.out.println("========== TYPIST CLASS TESTING ==========\n");

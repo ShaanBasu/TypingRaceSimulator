@@ -1,3 +1,5 @@
+package Part1;
+
 /**
  The typist class represents individual competitors in the race. This script pertains to the respective fields every typist should have which needs to be
  changed and assessed for the functioning of the race. Moreover, the methods needed to change and initialise these respective fields are also provided in the script.

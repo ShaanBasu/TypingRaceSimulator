@@ -1,3 +1,5 @@
+package Part1;
+
 public class TypingRaceTest {
     public static void main(String[] args){
         System.out.println("========== TYPING RACE CLASS TESTING ==========\n");
