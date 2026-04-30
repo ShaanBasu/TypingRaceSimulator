@@ -4,7 +4,7 @@ package Part2;
  * PassageLibrary provides a collection of predefined passages for the typing race.
  * Passages are organized by length (short, medium, long) to give users options.
  * 
- * @author Your Name
+ * @author Shaan Basu
  * @version 1.0
  */
 public class PassageLibrary {
@@ -28,7 +28,9 @@ public class PassageLibrary {
         "Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street.";
     
     /**
-     * Returns a passage by length category (SHORT, MEDIUM, LONG)
+     * Returns a passage from the library by difficulty category.
+     * Supported categories: SHORT, MEDIUM, LONG
+     * Returns the first passage in the category if available.
      */
     public static String getPassage(String category) {
         switch (category.toUpperCase()) {
@@ -44,7 +46,8 @@ public class PassageLibrary {
     }
     
     /**
-     * Returns a passage by index within a category
+     * Returns a specific passage by category and index.
+     * Each category has 2 passages available (index 0 or 1).
      */
     public static String getPassage(String category, int index) {
         switch (category.toUpperCase()) {
@@ -60,7 +63,7 @@ public class PassageLibrary {
     }
     
     /**
-     * Returns the length in characters for a passage category
+     * Returns the character length of a passage in a given category.
      */
     public static int getPassageLength(String category) {
         return getPassage(category).length();

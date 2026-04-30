@@ -34,6 +34,9 @@ public class Sponsor {
         }
     }
     
+    /**
+     * Creates a new Sponsor that awards bonuses for specific achievements.
+     */
     public Sponsor(String name, SponsorBonus bonusType) {
         this.name = name;
         this.bonusType = bonusType;
@@ -41,6 +44,10 @@ public class Sponsor {
         this.bonusAmount = bonusType.getDefaultBonus();
     }
     
+    /**
+     * Checks if a typist qualifies for this sponsor's bonus based on their race result.
+     * Different bonus types have different criteria.
+     */
     public boolean evaluateBonus(RaceResult result, LeaderboardEntry entry) {
         switch (bonusType) {
             case NO_BURNOUT:
@@ -60,7 +67,6 @@ public class Sponsor {
         }
     }
     
-    // Getters
     public String getName() {
         return name;
     }

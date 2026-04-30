@@ -30,10 +30,14 @@ public class LeaderboardEntry implements Comparable<LeaderboardEntry> {
         this.title = "Novice";
     }
     
+    /**
+     * Records a new race result and updates the typist's statistics.
+     * Tracks placements, win streaks, and burnout-free races.
+     */
     public void addRaceResult(RaceResult result) {
         totalRaces++;
         
-        // Track placements
+        // Update placement statistics and manage win streak
         if (result.getPosition() == 1) {
             firstPlaceWins++;
             currentWinStreak++;
@@ -49,79 +53,123 @@ public class LeaderboardEntry implements Comparable<LeaderboardEntry> {
             thirdPlaceWins++;
         }
         
-        // Update best streak
+        // Keep track of the longest winning streak
         if (currentWinStreak > bestWinStreak) {
             bestWinStreak = currentWinStreak;
         }
         
-        // Track burnout-free races
+        // Count races completed without burning out
         if (result.getBurnoutCount() == 0) {
             racesWithoutBurnout++;
         }
     }
     
+    /**
+     * Adds points to this typist's cumulative score.
+     */
     public void addPoints(int points) {
         this.cumulativePoints += points;
     }
     
+    /**
+     * Adds earnings to this typist's total winnings.
+     */
     public void addEarnings(double earnings) {
         this.totalEarnings += earnings;
     }
     
+    /**
+     * Compares this entry with another for sorting on the leaderboard.
+     * First ranks by total points, then breaks ties by number of races.
+     */
     @Override
     public int compareTo(LeaderboardEntry other) {
-        // Sort by cumulative points (descending), then by total races (descending)
         if (this.cumulativePoints != other.cumulativePoints) {
             return Integer.compare(other.cumulativePoints, this.cumulativePoints);
         }
         return Integer.compare(other.totalRaces, this.totalRaces);
     }
     
-    // Getters and Setters
+    /**
+     * Returns this typist's name.
+     */
     public String getTypistName() {
         return typistName;
     }
     
+    /**
+     * Returns total cumulative points earned across all races.
+     */
     public int getCumulativePoints() {
         return cumulativePoints;
     }
     
+    /**
+     * Returns the number of first place finishes.
+     */
     public int getFirstPlaceWins() {
         return firstPlaceWins;
     }
     
+    /**
+     * Returns the number of second place finishes.
+     */
     public int getSecondPlaceWins() {
         return secondPlaceWins;
     }
     
+    /**
+     * Returns the number of third place finishes.
+     */
     public int getThirdPlaceWins() {
         return thirdPlaceWins;
     }
     
+    /**
+     * Returns total currency earned across all races.
+     */
     public double getTotalEarnings() {
         return totalEarnings;
     }
     
+    /**
+     * Returns the total number of races completed by this typist.
+     */
     public int getTotalRaces() {
         return totalRaces;
     }
     
+    /**
+     * Returns the current consecutive win streak.
+     */
     public int getCurrentWinStreak() {
         return currentWinStreak;
     }
     
+    /**
+     * Returns the longest win streak ever achieved.
+     */
     public int getBestWinStreak() {
         return bestWinStreak;
     }
     
+    /**
+     * Returns the number of races completed without burning out.
+     */
     public int getRacesWithoutBurnout() {
         return racesWithoutBurnout;
     }
     
+    /**
+     * Returns this typist's achievement title or badge.
+     */
     public String getTitle() {
         return title;
     }
     
+    /**
+     * Updates this typist's achievement title.
+     */
     public void setTitle(String title) {
         this.title = title;
     }

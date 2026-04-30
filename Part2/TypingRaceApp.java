@@ -51,7 +51,10 @@ public class TypingRaceApp extends Application {
         stage.show();
     }
     
-    // Creating the start page
+    /**
+     * Creates the main menu screen with navigation options.
+     * Users can start a new race, view statistics, check the leaderboard, or exit.
+     */
     private Scene createStartPage() {
         VBox layout = new VBox(20);
         layout.setStyle("-fx-background-color: #1a1a1a;");
@@ -76,18 +79,20 @@ public class TypingRaceApp extends Application {
         Button exitBtn = createStyledButton("Exit", 18);
 
         
-        // Making it so that when the button is pressed it creates their respective pages.
+        // Button to initiate a new race with custom typist configuration
         startRaceBtn.setOnAction(e -> {
             typistConfigs.clear();
             Scene configScene = createRaceConfigPage();
             stage.setScene(configScene);
         });
         
+        // Button to view personal statistics and race history
         statsBtn.setOnAction(e -> {
             Scene statsScene = createStatsPage();
             stage.setScene(statsScene);
         });
         
+        // Button to view the competitive leaderboard
         leaderboardBtn.setOnAction(e -> {
             Scene leaderboardScene = createLeaderboardPage();
             stage.setScene(leaderboardScene);
@@ -109,8 +114,10 @@ public class TypingRaceApp extends Application {
         return new Scene(layout, 900, 700);
     }
     
-    // Method which creates the race Configuration page 
-    // It returns the scene which contains all the content of the created race config page
+    /**
+     * Creates the race configuration screen where users select passage difficulty,
+     * number of typists, and optional difficulty modifiers.
+     */
     private Scene createRaceConfigPage() {
         ScrollPane scrollPane = new ScrollPane();
         VBox mainLayout = new VBox(15);
@@ -153,7 +160,9 @@ public class TypingRaceApp extends Application {
         return new Scene(scrollPane, 900, 700);
     }
     
-    // This method creates the passage selection section in the race config page
+    /**
+     * Creates the passage selection section allowing users to pick from predefined or custom text.
+     */
     private VBox createPassageSelectionSection() {
         VBox section = new VBox(10);
         section.setStyle("-fx-border-color: #444; -fx-border-width: 1; -fx-padding: 15; -fx-background-color: #252525;");
@@ -162,7 +171,7 @@ public class TypingRaceApp extends Application {
         title.setStyle("-fx-font-size: 18; -fx-text-fill: #00ff00; -fx-font-weight: bold;");
         section.getChildren().add(title);
         
-        // A toggle group makes it so that only one of the button in the togglegroup can be selected at a time.
+        // Radio button group ensures only one passage difficulty is selected at a time
         ToggleGroup passageGroup = new ToggleGroup();
         
         RadioButton shortBtn = new RadioButton("Short Passage (120 chars)");
@@ -181,15 +190,15 @@ public class TypingRaceApp extends Application {
         longBtn.setStyle(radioStyle);
         customBtn.setStyle(radioStyle);
         
-        // We then have to create the text area for when the user selects the cutsombtn
+        // Text area allows users to input their own passage when custom option is selected
         TextArea customPassageArea = new TextArea();
         customPassageArea.setStyle("-fx-control-inner-background: #333333; -fx-text-fill: #cccccc;");
         customPassageArea.setWrapText(true);
         customPassageArea.setPrefRowCount(4);
         customPassageArea.setPromptText("Enter your custom passage here...");
-        customPassageArea.setVisible(false); // We initially set its visibility to false and change it when the custombtn is selected
+        customPassageArea.setVisible(false);
         
-        // Preview labels: We use the passageLibrary class to choose one of the short, medium and long passages and then use that to show the user a preview of the passage.
+        // Preview labels show a snippet of each passage option to help users decide
         Label shortPreview = new Label("Preview: " + PassageLibrary.getPassage("SHORT").substring(0, Math.min(80, PassageLibrary.getPassage("SHORT").length())) + "...");
         Label mediumPreview = new Label("Preview: " + PassageLibrary.getPassage("MEDIUM").substring(0, Math.min(80, PassageLibrary.getPassage("MEDIUM").length())) + "...");
         Label longPreview = new Label("Preview: " + PassageLibrary.getPassage("LONG").substring(0, Math.min(80, PassageLibrary.getPassage("LONG").length())) + "...");
@@ -202,7 +211,7 @@ public class TypingRaceApp extends Application {
         mediumPreview.setWrapText(true);
         longPreview.setWrapText(true);
         
-        // We then make it so that the preview is shown when the user selects their button 
+        // Update selected passage when difficulty is chosen
         shortBtn.setOnAction(e -> {
             selectedPassage = PassageLibrary.getPassage("SHORT");
             customPassageArea.setVisible(false);
@@ -218,7 +227,7 @@ public class TypingRaceApp extends Application {
             customPassageArea.setVisible(false);
         });
         
-        // When custom button is selected we make it so that the text area is visible
+        // Show custom passage input when custom option is selected
         customBtn.setOnAction(e -> customPassageArea.setVisible(true));
         customPassageArea.textProperty().addListener((obs, oldVal, newVal) -> {
             if (customBtn.isSelected()) {
@@ -244,8 +253,10 @@ public class TypingRaceApp extends Application {
         return section;
     }
     
-    // This method creates the Number of Typists in the race Count.
-    // It returns the created section as a VBox.
+    /**
+     * Creates the typist count selection section.
+     * Users can choose 2-6 typists for the race.
+     */
     private VBox createTypistCountSection() {
         VBox section = new VBox(10);
         section.setStyle("-fx-border-color: #444; -fx-border-width: 1; -fx-padding: 15; -fx-background-color: #252525;");
@@ -258,7 +269,7 @@ public class TypingRaceApp extends Application {
         HBox countBox = new HBox(15);
         countBox.setAlignment(Pos.CENTER_LEFT);
         
-        // A for loop is used to create the options for increasing number of typists from 2 -6 inclusive
+        // Create radio buttons for each typist count option
         for (int i = 2; i <= 6; i++) {
             RadioButton btn = new RadioButton(i + " Typists");
             btn.setToggleGroup(countGroup);
@@ -277,8 +288,10 @@ public class TypingRaceApp extends Application {
         return section;
     }
     
-    // This method creates the difficulty modifier selection section
-    // It returns the section in a VBox
+    /**
+     * Creates the difficulty modifier selection section.
+     * Includes optional modifiers like autocorrect, caffeine mode, and night shift.
+     */
     private VBox createDifficultyModifiersSection() {
         VBox section = new VBox(10);
         section.setStyle("-fx-border-color: #444; -fx-border-width: 1; -fx-padding: 15; -fx-background-color: #252525;");
@@ -287,7 +300,7 @@ public class TypingRaceApp extends Application {
         title.setStyle("-fx-font-size: 18; -fx-text-fill: #00ff00; -fx-font-weight: bold;");
         section.getChildren().add(title);
         
-        //We use a checkBox and also not a toggle group as all the difficulty modifiers can be put together at the same time if wished.
+        // Checkboxes allow multiple difficulty modifiers to be enabled simultaneously
         CheckBox autocorrectCheck = new CheckBox("Autocorrect: Halve slideBack amount");
         CheckBox caffeineCheck = new CheckBox("Caffeine Mode: 10-turn speed boost, then burnout risk");
         CheckBox nightShiftCheck = new CheckBox("Night Shift: 15% accuracy reduction for all");
@@ -297,6 +310,7 @@ public class TypingRaceApp extends Application {
         caffeineCheck.setStyle(checkStyle);
         nightShiftCheck.setStyle(checkStyle);
         
+        // Update modifier flags when checkboxes change state
         autocorrectCheck.selectedProperty().addListener((obs, oldVal, newVal) -> autocorrectEnabled = newVal);
         caffeineCheck.selectedProperty().addListener((obs, oldVal, newVal) -> caffeineModeEnabled = newVal);
         nightShiftCheck.selectedProperty().addListener((obs, oldVal, newVal) -> nightShiftEnabled = newVal);
@@ -306,8 +320,10 @@ public class TypingRaceApp extends Application {
         return section;
     }
     
-    // This creates the Configuration page for the typists
-    // It makes it so that the user can customise the typists name, their symbol, their colour, their typing style, their keyboard style, and their accessories
+    /**
+     * Creates the typist customization screen where users configure each typist's attributes.
+     * Allows setting name, symbol, color, typing style, keyboard, and accessories.
+     */
     private Scene createTypistConfigPage(int typistNumber) {
         VBox mainLayout = new VBox(15);
         mainLayout.setStyle("-fx-background-color: #1a1a1a; -fx-padding: 20;");
@@ -621,7 +637,10 @@ public class TypingRaceApp extends Application {
         stage.setScene(resultsScene);
     }
     
-    // ========== STATISTICS PAGE ==========
+    /**
+     * Creates the statistics page showing race history and performance metrics.
+     * Displays overall stats and per-typist performance data.
+     */
     private Scene createStatsPage() {
         VBox mainLayout = new VBox(15);
         mainLayout.setStyle("-fx-background-color: #1a1a1a; -fx-padding: 20;");
@@ -735,6 +754,9 @@ public class TypingRaceApp extends Application {
         return new Scene(mainScroll, 900, 700);
     }
     
+    /**
+     * Creates the competitive leaderboard showing ranked typists, points, and achievements.
+     */
     private Scene createLeaderboardPage() {
         VBox mainLayout = new VBox(15);
         mainLayout.setStyle("-fx-background-color: #1a1a1a; -fx-padding: 20;");
@@ -932,17 +954,22 @@ public class TypingRaceApp extends Application {
         return new Scene(mainScroll, 1000, 800);
     }
     
-    // ========== UTILITY METHODS ==========
+    /**
+     * Creates a styled button with hover effects.
+     * The button darkens slightly when hovered for visual feedback.
+     */
     private Button createStyledButton(String text, int fontSize) {
         Button btn = new Button(text);
         btn.setStyle("-fx-font-size: " + fontSize + "; -fx-padding: 10 30; " +
                      "-fx-background-color: #00ff00; -fx-text-fill: #000000; " +
                      "-fx-font-weight: bold; -fx-cursor: hand;");
+        // Darken button on hover
         btn.setOnMouseEntered(e -> 
             btn.setStyle("-fx-font-size: " + fontSize + "; -fx-padding: 10 30; " +
                         "-fx-background-color: #00dd00; -fx-text-fill: #000000; " +
                         "-fx-font-weight: bold; -fx-cursor: hand;")
         );
+        // Restore normal color when mouse leaves
         btn.setOnMouseExited(e -> 
             btn.setStyle("-fx-font-size: " + fontSize + "; -fx-padding: 10 30; " +
                         "-fx-background-color: #00ff00; -fx-text-fill: #000000; " +
@@ -951,6 +978,10 @@ public class TypingRaceApp extends Application {
         return btn;
     }
     
+    /**
+     * Validates that race configuration is complete and valid.
+     * Checks passage selection and typist count requirements.
+     */
     private boolean validateRaceConfig() {
         if (selectedPassage == null || selectedPassage.trim().isEmpty()) {
             showAlert("Please select a passage");
@@ -963,6 +994,9 @@ public class TypingRaceApp extends Application {
         return true;
     }
     
+    /**
+     * Shows a popup alert with a warning message to the user.
+     */
     private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setTitle("Invalid Configuration");
