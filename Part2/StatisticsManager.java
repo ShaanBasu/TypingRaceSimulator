@@ -15,8 +15,8 @@ public class StatisticsManager {
     }
     
     /**
-     * Records a race result in history.
-     * Void races are not recorded in statistics.
+     * Records a race result in the typist's history and updates personal best WPM.
+     * Void races are excluded from statistics.
      */
     public void recordRace(RaceResult result) {
         // Skip void races - they don't count for statistics
@@ -35,21 +35,21 @@ public class StatisticsManager {
     }
     
     /**
-     * Gets all race history for a typist.
+     * Returns all race results for a specific typist in chronological order.
      */
     public List<RaceResult> getTypistHistory(String typistName) {
         return typistHistory.getOrDefault(typistName, new ArrayList<>());
     }
     
     /**
-     * Gets personal best WPM for a typist.
+     * Returns the best Words Per Minute score achieved by a typist.
      */
     public double getPersonalBestWPM(String typistName) {
         return personalBestWPM.getOrDefault(typistName, 0.0);
     }
     
     /**
-     * Gets average WPM across all races for a typist.
+     * Calculates the average WPM across all completed races for a typist.
      */
     public double getAverageWPM(String typistName) {
         List<RaceResult> history = getTypistHistory(typistName);
@@ -61,7 +61,7 @@ public class StatisticsManager {
     }
     
     /**
-     * Gets average accuracy across all races for a typist.
+     * Calculates the average accuracy across all completed races for a typist.
      */
     public double getAverageAccuracy(String typistName) {
         List<RaceResult> history = getTypistHistory(typistName);
@@ -73,14 +73,14 @@ public class StatisticsManager {
     }
     
     /**
-     * Gets total races completed by a typist.
+     * Returns the total number of races completed by a typist.
      */
     public int getTotalRaces(String typistName) {
         return getTypistHistory(typistName).size();
     }
     
     /**
-     * Gets number of 1st place finishes for a typist.
+     * Returns the number of races won (1st place finishes) by a typist.
      */
     public int getFirstPlaceCount(String typistName) {
         return (int) getTypistHistory(typistName).stream()
@@ -89,7 +89,7 @@ public class StatisticsManager {
     }
     
     /**
-     * Gets total burnout events for a typist.
+     * Returns the total number of times a typist has burned out across all races.
      */
     public int getTotalBurnoutEvents(String typistName) {
         return (int) getTypistHistory(typistName).stream()

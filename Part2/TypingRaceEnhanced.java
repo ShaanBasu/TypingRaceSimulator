@@ -15,8 +15,8 @@ import javafx.util.Duration;
  * - Passage text display
  * - Customizable typist configurations
  * 
- * @author Your Name
- * @version 2.0
+ * @author Shaan Basu
+ * @version 1.0
  */
 public class TypingRaceEnhanced {
     
@@ -69,7 +69,8 @@ public class TypingRaceEnhanced {
     }
     
     /**
-     * Adds a typist to the race.
+     * Adds a typist to the race and initializes their tracking data.
+     * Records initial accuracy and burnout count for later analysis.
      */
     public void addTypist(TypistWrapper typist) {
         int index = typists.size();
@@ -79,12 +80,17 @@ public class TypingRaceEnhanced {
     }
     
     /**
-     * Sets difficulty modifiers.
+     * Enables or disables autocorrect difficulty modifier.
+     * When enabled, halves the slide-back distance for mistypes.
      */
     public void setAutocorrect(boolean enabled) {
         this.autocorrectEnabled = enabled;
     }
     
+    /**
+     * Enables or disables caffeine mode difficulty modifier.
+     * Grants a 10-turn speed boost followed by increased burnout risk.
+     */
     public void setCaffeineMode(boolean enabled) {
         this.caffeineMode = enabled;
         if (enabled) {
@@ -97,6 +103,10 @@ public class TypingRaceEnhanced {
         }
     }
     
+    /**
+     * Enables or disables night shift difficulty modifier.
+     * Reduces all typists' accuracy by 15% to simulate fatigue.
+     */
     public void setNightShift(boolean enabled) {
         this.nightShift = enabled;
         if (enabled) {
@@ -184,86 +194,93 @@ public class TypingRaceEnhanced {
     }
     
     /**
-     * Simulates one turn for a specific typist.
+     * Simulates one turn of typing for a specific typist.
+     * Handles mistypes, burnout, recovery, and difficulty modifiers.
      */
     private void advanceTypist(int typistIndex) {
         TypistWrapper typist = typists.get(typistIndex);
         
-        // Skip if already finished
+        // Skip if typist has already finished the passage
         if (hasFinished(typistIndex)) {
             return;
         }
         
+        // Clear recovery conditions from previous turns
         if (typist.hasMistyped()) {
             typist.recoverFromMistype();
         }
         
+        // Handle burnout recovery
         if (typist.isBurntOut()) {
             typist.recoverFromBurnout();
             return;
         }
         
-        // Caffeine mode: speed boost for first 10 turns
+        // Apply caffeine mode boost if active
         double accuracyModifier = 0;
         if (caffeineMode && caffeineBoostTurns[typistIndex] > 0) {
-            // Speed boost: increased accuracy during caffeine boost
+            // Speed boost provides accuracy bonus
             accuracyModifier = 0.15;
             caffeineBoostTurns[typistIndex]--;
         } else if (caffeineMode && !caffeineBurnoutActive[typistIndex]) {
-            // After boost: increased burnout risk
+            // After boost ends, mark for increased burnout risk
             caffeineBurnoutActive[typistIndex] = true;
         }
         
-        // Calculate effective slide back amount considering autocorrect
+        // Autocorrect reduces the penalty for mistypes
         int slideBackAmount = SLIDE_BACK_AMOUNT;
         if (autocorrectEnabled) {
             slideBackAmount = slideBackAmount / 2;
         }
         
-        // Mistype check
+        // Calculate mistype probability with modifiers
         double mistypeChance = (1 - typist.getAccuracy() - accuracyModifier) * MISTYPE_BASE_CHANCE;
         double random = Math.random();
         
         if (random < mistypeChance) {
+            // Mistype occurred - typist slides back
             int slideAmount = slideBackAmount + (int)(2 * typist.getAccuracy());
             typist.slideBack(slideAmount);
         }
-        // Burnout check - increased when in caffeine burnout phase
+        // Burnout check - increased risk during caffeine crash
         else if (Math.random() < 0.05 * typist.getAccuracy() * typist.getAccuracy() 
                  * (caffeineBurnoutActive[typistIndex] ? 2.0 : 1.0)) {
+            // Typist burns out
             typist.burnOut(BURNOUT_DURATION);
             typist.setAccuracy(typist.getAccuracy() - BURNOUT_ACCURACY_DECREASE_AMOUNT);
-            // Track burnout count for this typist
+            // Track burnout for statistics
             typistBurnoutCounts.put(typistIndex, typistBurnoutCounts.get(typistIndex) + 1);
         }
         else {
+            // Successfully typed character
             typist.typeCharacter();
         }
     }
     
     /**
-     * Checks if a typist has finished.
+     * Checks if a typist has finished the passage.
      */
     private boolean hasFinished(int index) {
         return raceOrder.contains(index);
     }
     
     /**
-     * Generates RaceResult objects for each typist after the race completes.
-     * Handles ties, position assignment, and void race detection.
+     * Generates race results for all typists after the race completes.
+     * Calculates positions, handles ties, and detects void race conditions.
      */
     private void generateRaceResults() {
         raceResults.clear();
         
-        // Detect void race condition
+        // Check if race meets void conditions (improper ties)
         String voidReason = checkForVoidRace();
         
-        // Determine positions with proper tie handling
+        // Determine final positions for all typists with tie handling
         Map<Integer, Integer> typistPositions = assignPositions();
         
+        // Create result for each typist with all relevant metrics
         for (int i = 0; i < typists.size(); i++) {
             TypistWrapper typist = typists.get(i);
-            int position = typistPositions.getOrDefault(i, typists.size()); // Default to last if didn't finish
+            int position = typistPositions.getOrDefault(i, typists.size());
             long raceTimeMs = typistFinishTimes.getOrDefault(i, System.currentTimeMillis() - raceStartTimeMs);
             double finalAccuracy = typist.getAccuracy();
             double initialAccuracy = typistInitialAccuracy.get(i);
@@ -281,7 +298,7 @@ public class TypingRaceEnhanced {
                 passage
             );
             
-            // Mark as void if applicable
+            // Mark result as void if applicable
             if (voidReason != null) {
                 result.setVoidRace(voidReason);
             }
@@ -291,17 +308,15 @@ public class TypingRaceEnhanced {
     }
     
     /**
-     * Detects if the race should be voided due to ties.
-     * Void conditions:
-     * - 2-way tie for 1st place with exactly 2 typists total
-     * - 3-way tie or more for 1st place
+     * Checks if the race should be voided due to problematic tie conditions.
+     * A race is void if: 3+ typists tie for first, or 2 typists tie for first with only 2 total.
      */
     private String checkForVoidRace() {
         if (raceOrder.isEmpty()) {
             return null;
         }
         
-        // Get all typists that finished first (same finish time)
+        // Collect all typists with the same finish time as the leader
         List<Integer> firstFinishers = new ArrayList<>();
         firstFinishers.add(raceOrder.get(0));
         long firstFinishTime = typistFinishTimes.get(raceOrder.get(0));
@@ -311,28 +326,25 @@ public class TypingRaceEnhanced {
             if (finishTime == firstFinishTime) {
                 firstFinishers.add(raceOrder.get(i));
             } else {
-                break; // Times differ, no more ties for first
+                break;
             }
         }
         
         // Check void conditions
         if (firstFinishers.size() >= 3) {
-            // 3-way tie or more
             return "Race void due to " + firstFinishers.size() + "-way tie for first place";
         }
         
         if (firstFinishers.size() == 2 && typists.size() == 2) {
-            // 2-way tie with only 2 typists total
             return "Race void due to 2-way tie (2 typists total)";
         }
         
-        return null; // Valid race
+        return null;
     }
     
     /**
-     * Assigns positions to all typists, handling ties appropriately.
-     * - First place ties: valid if 2 typists with 3+ total, both get position 1
-     * - Non-first place ties: broken by progress, then by list order
+     * Assigns positions to all typists based on finish times and progress.
+     * Valid ties are preserved, invalid ties are broken by progress then list order.
      */
     private Map<Integer, Integer> assignPositions() {
         Map<Integer, Integer> positions = new HashMap<>();
@@ -341,14 +353,14 @@ public class TypingRaceEnhanced {
             return positions;
         }
         
-        // Group typists by finish time
+        // Group typists by their finish times for tie detection
         Map<Long, List<Integer>> timeToTypists = new HashMap<>();
         for (int typistIndex : raceOrder) {
             long finishTime = typistFinishTimes.get(typistIndex);
             timeToTypists.computeIfAbsent(finishTime, k -> new ArrayList<>()).add(typistIndex);
         }
         
-        // Sort finish times to process in order
+        // Sort finish times to process results chronologically
         List<Long> sortedTimes = new ArrayList<>(timeToTypists.keySet());
         java.util.Collections.sort(sortedTimes);
         
@@ -356,30 +368,30 @@ public class TypingRaceEnhanced {
         for (Long finishTime : sortedTimes) {
             List<Integer> typistAtTime = timeToTypists.get(finishTime);
             
-            // Break ties for non-first-place by progress, then list order
+            // For non-first-place ties, break ties using progress then list order
             if (typistAtTime.size() > 1 && position > 1) {
                 typistAtTime.sort((a, b) -> {
                     int progressA = typists.get(a).getProgress();
                     int progressB = typists.get(b).getProgress();
                     if (progressA != progressB) {
-                        return Integer.compare(progressB, progressA); // Higher progress first
+                        return Integer.compare(progressB, progressA);
                     }
-                    return Integer.compare(a, b); // Then by list index
+                    return Integer.compare(a, b);
                 });
             }
             
-            // Assign same position to all at this time (including ties)
+            // Assign positions to all typists at this finish time
             for (Integer typistIndex : typistAtTime) {
                 positions.put(typistIndex, position);
             }
-            position += typistAtTime.size(); // Skip positions for tied typists (e.g., if 2 tied for 1st, next is 3rd)
+            position += typistAtTime.size();
         }
         
         return positions;
     }
 
     
-    // Getters
+    // Getter methods for race data
     public String getPassage() {
         return passage;
     }

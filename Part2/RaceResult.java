@@ -42,18 +42,32 @@ public class RaceResult {
         return typistName;
     }
     
+    /**
+     * Returns the typist's final position in the race.
+     * Position 1 is first place, 2 is second, etc.
+     */
     public int getPosition() {
         return position;
     }
     
+    /**
+     * Returns the total time taken to complete the passage in milliseconds.
+     */
     public long getRaceTimeMs() {
         return raceTimeMs;
     }
     
+    /**
+     * Returns the typist's accuracy at the end of the race.
+     * This accounts for any penalties from burning out.
+     */
     public double getFinalAccuracy() {
         return finalAccuracy;
     }
     
+    /**
+     * Returns the typist's accuracy before any race penalties were applied.
+     */
     public double getInitialAccuracy() {
         return initialAccuracy;
     }
@@ -62,14 +76,23 @@ public class RaceResult {
         return passageLength;
     }
     
+    /**
+     * Returns how many times this typist burned out during the race.
+     */
     public int getBurnoutCount() {
         return burnoutCount;
     }
     
+    /**
+     * Returns the date and time when this race was completed.
+     */
     public LocalDateTime getRaceDate() {
         return raceDate;
     }
     
+    /**
+     * Returns the passage text that was used in this race.
+     */
     public String getPassage() {
         return passage;
     }
@@ -97,7 +120,9 @@ public class RaceResult {
     }
     
     /**
-     * Calculates Words Per Minute (WPM).
+     * Calculates the Words Per Minute (WPM) metric for this race.
+     * Uses standard 5 characters per word calculation.
+     * Returns 0 if no time has elapsed to avoid division errors.
      * Assumes average word length of 5 characters.
      */
     public double calculateWPM() {

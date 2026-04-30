@@ -6,7 +6,7 @@ package Part2;
  * This class calculates how each customization affects the typist's
  * accuracy, speed, and burnout characteristics.
  * 
- * @author Your Name
+ * @author Shaan Basu
  * @version 1.0
  */
 public class TypistConfiguration {
@@ -126,13 +126,48 @@ public class TypistConfiguration {
         return modifier;
     }
     
-    // Getters
-    public String getTypistName() { return typistName; }
-    public String getSymbol() { return symbol; }
-    public String getColor() { return color; }
-    public TypingStyle getTypingStyle() { return typingStyle; }
-    public KeyboardType getKeyboardType() { return keyboardType; }
-    public Accessory getAccessory() { return accessory; }
+    // Getters for typist configuration details
+    /**
+     * Returns the typist's name.
+     */
+    public String getTypistName() { 
+        return typistName; 
+    }
+    
+    /**
+     * Returns the symbol or emoji representing this typist.
+     */
+    public String getSymbol() { 
+        return symbol; 
+    }
+    
+    /**
+     * Returns the CSS color for this typist's display.
+     */
+    public String getColor() { 
+        return color; 
+    }
+    
+    /**
+     * Returns the typing style selected for this typist.
+     */
+    public TypingStyle getTypingStyle() { 
+        return typingStyle; 
+    }
+    
+    /**
+     * Returns the keyboard type selected for this typist.
+     */
+    public KeyboardType getKeyboardType() { 
+        return keyboardType; 
+    }
+    
+    /**
+     * Returns the accessory selected for this typist (may be null).
+     */
+    public Accessory getAccessory() { 
+        return accessory; 
+    }
     
     /**
      * Returns a formatted description of all customization choices and their impacts.

@@ -29,8 +29,8 @@ public class RewardSystem {
     }
     
     /**
-     * Records a race result and awards points/earnings.
-     * Void races are not recorded in the leaderboard.
+     * Records a race result and awards points and earnings to the typist's leaderboard entry.
+     * Void races are not recorded on the leaderboard.
      */
     public void recordRaceResult(RaceResult result) {
         // Skip void races - they don't count for leaderboard
@@ -61,13 +61,15 @@ public class RewardSystem {
     }
     
     /**
-     * Calculates points for a single race result.
-     * Points based on: position (3/2/1), WPM bonus, and burnout penalty.
+     * Calculates points for a single race result based on position, WPM, and burnout.
+     * First place gets 3 points, second gets 2, third gets 1.
+     * Bonus point awarded for achieving 50+ WPM.
+     * Penalty of 1 point per burnout event.
      */
     private int calculatePointsForRace(RaceResult result) {
         int points = 0;
         
-        // Base points for position
+        // Calculate base points by position
         switch (result.getPosition()) {
             case 1:
                 points += POINTS_FIRST_PLACE;
@@ -83,25 +85,27 @@ public class RewardSystem {
                 break;
         }
         
-        // WPM bonus
+        // Add bonus for high speed performances
         if (result.calculateWPM() > WPM_BONUS_THRESHOLD) {
             points += WPM_BONUS_POINTS;
         }
         
-        // Burnout penalty
+        // Deduct points for burnout events
         points += result.getBurnoutCount() * BURNOUT_PENALTY;
         
-        return Math.max(0, points);  // Minimum 0 points
+        return Math.max(0, points);  // Ensure no negative points
     }
     
     /**
-     * Calculates earnings for a single race result.
-     * Earnings based on: position, WPM bonus, and burnout penalties.
+     * Calculates earnings for a race based on placement, speed, and penalties.
+     * First place earns 100 coins, second earns 75, third earns 50.
+     * Bonus coins awarded for WPM above 50 threshold.
+     * Burnout events reduce earnings by 10 coins each.
      */
     private double calculateEarningsForRace(RaceResult result) {
         double earnings = 0;
         
-        // Base earnings for position
+        // Base earnings determined by finishing position
         switch (result.getPosition()) {
             case 1:
                 earnings += EARNING_FIRST_PLACE;
@@ -117,53 +121,54 @@ public class RewardSystem {
                 break;
         }
         
-        // WPM bonus earnings
+        // Bonus earnings for exceeding speed threshold
         double wpm = result.calculateWPM();
         if (wpm > WPM_BONUS_THRESHOLD) {
             earnings += (wpm - WPM_BONUS_THRESHOLD) * WPM_BONUS_EARNING;
         }
         
-        // Burnout penalties
+        // Deduct earnings for each burnout occurrence
         earnings += result.getBurnoutCount() * BURNOUT_PENALTY_EARNING;
         
         return Math.max(0, earnings);
     }
     
     /**
-     * Determines the title/badge based on typist achievements.
+     * Assigns achievement titles based on typist accomplishments.
+     * Titles unlock at different milestones for motivation and recognition.
      */
     private String calculateTitle(LeaderboardEntry entry) {
-        // Speed Demon: 3 consecutive wins
+        // Check for speed demon streaks
         if (entry.getCurrentWinStreak() >= 3) {
             return "🔥 Speed Demon";
         }
         
-        // Iron Fingers: 5 races without burnout
+        // Check for consistency without burning out
         if (entry.getRacesWithoutBurnout() >= 5) {
             return "💪 Iron Fingers";
         }
         
-        // Champion: 10 total wins
+        // Champion title unlocked at 10 wins
         if (entry.getFirstPlaceWins() >= 10) {
             return "👑 Champion";
         }
         
-        // Contender: 5 total wins
+        // Contender title at 5 wins
         if (entry.getFirstPlaceWins() >= 5) {
             return "⭐ Contender";
         }
         
-        // Rising Star: 200+ points
+        // Rising star at 200 points
         if (entry.getCumulativePoints() >= 200) {
             return "🌟 Rising Star";
         }
         
-        // Experienced: 10+ races
+        // Experienced racer at 10 races
         if (entry.getTotalRaces() >= 10) {
             return "📈 Experienced";
         }
         
-        // Default
+        // Newer typists get encouragement
         if (entry.getTotalRaces() >= 3) {
             return "🏃 Racer";
         }
@@ -172,7 +177,7 @@ public class RewardSystem {
     }
     
     /**
-     * Gets the leaderboard sorted by cumulative points.
+     * Returns the complete leaderboard sorted by cumulative points.
      */
     public List<LeaderboardEntry> getLeaderboard() {
         List<LeaderboardEntry> sorted = new ArrayList<>(leaderboard.values());
@@ -181,14 +186,14 @@ public class RewardSystem {
     }
     
     /**
-     * Gets a specific typist's leaderboard entry.
+     * Returns a specific typist's leaderboard entry.
      */
     public LeaderboardEntry getEntry(String typistName) {
         return leaderboard.getOrDefault(typistName, new LeaderboardEntry(typistName));
     }
     
     /**
-     * Gets all tracked typists on the leaderboard.
+     * Returns the set of all typists currently tracked on the leaderboard.
      */
     public Set<String> getAllTypists() {
         return leaderboard.keySet();
